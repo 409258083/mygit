@@ -20,7 +20,7 @@
 19.git branch //查看分支 
 20.git branch 名称 //创建分支 星号在哪 表示在那个分支
 21.git checkout 分支名称 //切换分支
-22. 
+22. git
 
 
 
