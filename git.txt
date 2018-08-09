@@ -1,0 +1,31 @@
+1.git config --global user.name 名字
+2.git config --global user.email 邮箱地址
+3.mkdir 项目名称  //创建项目  
+4.cd 项目名称
+5.git init //创建git仓库  
+6.点击创建项目 //进入项目手动创建
+7.git add .  //提交项目 (.)表示提交全部
+8.git status // 查看项目
+9.git commit -m "这里是注释"  //提交代码
+10.提交的过程 ： 工作区 -(git add .)- 暂存区 -(git commit -m "注释")-版本库 
+11.git rm 文件名称 //删除文件
+12.git remote add origin 服务器地址  //给服务器项目地址取个别名 origin
+13.git push 服务器地址(也可以是origin) master //项目推送到服务器上  【要知道用户名和密码】
+14.git clone 服务器地址 //克隆服务器代码
+15.git pull 服务器地址 master //更新代码
+16.git log 或者 git log pretty=oneline   //查看历史记录
+17.git reset --hard HEAD^^^//切回原来的第3个版本  (^^^)表示第几个版本
+17.git reset --hard 版本号(一大串数据) //这个也是切换版本号的写法
+18.git reflog //查看每次的操作
+19.git branch //查看分支 
+20.git branch 名称 //创建分支 星号在哪 表示在那个分支
+21. git checkout 分支名称 //切换分支
+22.
+
+
+
+
+
+
+
+
