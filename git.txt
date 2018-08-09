@@ -28,7 +28,7 @@
 27.git remote add origin(别名) ssh服务器地址 //设置私钥 要以ssh开头的地址
 28.ssh-keygen -t rsa -C "邮箱地址"//设置公钥  然后一路回车
 29.id_rsa私钥 ，id_rsa_pub公钥 ，打开目录下找到公钥，复制里面代码，然后再服务器上进行公钥配置
-30.测试
+30.
 
 
 
