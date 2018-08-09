@@ -18,9 +18,16 @@
 17.git reset --hard 版本号(一大串数据) //这个也是切换版本号的写法
 18.git reflog //查看每次的操作
 19.git branch //查看分支 
-20.git branch 名称 //创建分支 星号在哪 表示在那个分支
+20.git branch 分支名称 //创建分支 星号在哪 表示在那个分支
 21.git checkout 分支名称 //切换分支
-22. git
+22.git merge 分支名称 //合并分支
+23.两个分支同时修改同一行，会出现报错， 需要进入目录进行删除，然后再运行git add .  git commit -m
+24.git branch -d 分支名称，//删除分支
+25.git remote -v //查看服务器地址
+26.git remote remove origin(服务器别名) //删除服务器别名  删除以后可以重新创建别名 可参考第12条，服务器有两个地址，https或者http/ssh开头的 
+27.git remote add ssh服务器地址 //设置私钥 要以ssh开头的地址
+28.ssh-keygen -t rsa -C "邮箱地址"//设置公钥  然后一路回车
+29.id_rsa私钥 ，id_rsa_pub公钥 ，打开目录下找到公钥，复制里面代码，然后再服务器上进行公钥配置
 
 
 
