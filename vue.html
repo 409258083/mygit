@@ -1,0 +1,457 @@
+注意：1.vue路径引用js可以不加后缀 .vue组件必须添加
+	  2.json数据只能放在static文件夹内才可以调用，不然调用不了，会报错
+	  3.路由跳转要相互配合使用
+	  	3.1 this.$route.params的使用
+	  		设置跳转：this.$router.push({ name:'Admin', params: { userId: 123 }});
+	  		获取跳转路径参数： this.$route.params.userId
+
+	  	3.2this.$route.query的使用
+	  		设置跳转：this.$router.push({path: '/monitor',query:{id:id,}}）
+	  		获取跳转路径参数:this.$route.query.id
+
+	  	3.3	在路由上设置
+	  		{path:"/pages/:id",component:AddBlog}
+	  		<router-link v-bind:to="'/pages'+boolg.id">
+	  			<h2>{{boolg}}</h2>
+	  		</router-link>
+	  		export default{
+				data(){
+					return{
+						id:this.$route.params.id,
+						boolg:{}
+					}
+				},
+				created(){
+					this.$http.get("url"+this.id).then(function(data){
+						this.boolg=data;
+					})
+				}
+			}
+
+			3.4在路由上传递对象 
+			（1）路由上设置id
+				{
+			      path: '/Back/:id',
+			      name: 'Back',
+			      component: Back
+			    },
+
+			  (2)在html上设置 绑定属性
+			  	先把json对象转换成字符串，在进行编码
+			  <router-link  v-bind:to="'/Back/'+encodeURIComponent(JSON.stringify(this.userInfo))">登陆</router-link>
+
+			  （3）在js上设置一个空对象
+				data () {
+				    return {
+				    	userInfo:{},
+				    }
+				  }
+				(4)在跳转页面接收参数
+				 接收参数不用进行解码，自动解码,但是要把json字符串 转换成json对象
+				  this.users = this.$route.params.id;
+
+
+
+
+1.v-bind 属性绑定 
+	hrefs:"www.baidu.com"
+	<a v-bind:href="hrefs"></a>
+
+2.v-html 
+	tmplets:"<a href='www.baidu.com'>百度</a>"
+	<p v-html="tmplets"></p>  
+
+3.v-on:click 绑定事件  v-on等同于@
+	<div v-on:click="next"></div>
+
+4.事件修饰符
+	1.stop阻止事件冒泡
+	2.prevent阻止默认事件
+	3.once只能点击一次
+	4.cuptrue添加事件侦听器时使用事件捕获模式
+	5._self 只当事件在该元素本身（而不是子元素）触发时触发回调
+	6.passive 滚动事件的默认行为 (即滚动行为) 将会立即触发
+
+5.双向数据绑定
+	<input type="text" ref="name" @keyup="upData" v-bind:value="name">
+	1.拿到输入框 输入的值 this.$refs.name.value
+	<input type="text" v-model="name">
+	2.v-model 也可以拿到value值
+
+6.计算属性computde
+
+	虚拟Dao的数据发生改变的时候 才会触发。
+
+
+7.动态绑定css样式
+	要么是true ,要么是false
+	<div v-bind:class="{t1:true,}">实列1</div>
+
+8. 注册组件 //在main.js里面注册
+	(1)全局组件
+			import Users from "./components/Users"
+			Vue.component("users",Users);
+			然后再App.vue里面调用 <users/>
+	(2)局部组件
+			在App.vue(或者调用的页面里) 直接用 import Users from "./components/Users"
+			然后再components里注册 components{"users":Users};
+			最后调用 <users/>	
+9.组件调用
+	name:"app-header" // name的名字必须跟调用的名字一样 不然可以正常显示 但是会报错
+	<app-header/> 
+10.属性传值
+	在App.vue 调用的标签中绑定要传递的数据 <users v-bind:users="users"/>
+	在users页面中 用props属性获取传递过来的数据
+	export default {
+	    name: 'users',
+	    props:["users"],  
+	    <!--或者 props:{
+	    	 		users:{
+	    	 			type:Array,
+	    	 			required:false
+	    	 		}
+	    	 	} -->
+	    data(){
+		  return {
+		  	 
+		  }
+	  }
+	}
+
+11.传值和传引用
+		（1）传值 ：string number boolean  //删除数据其他地方没有影响
+		（2）传引用 array object //一旦删除一个地方的数据  其他地方也会发生变化
+
+ 12.子向父组件传值
+ 	（1）子页面设置
+	 	this.$emit("changTitle","子向父组件传值");
+	 	例子(在子页面中)：methods:{
+	   		changUser:function(){  //changUser子页面定义的函数
+	   			this.$emit("chageTitle","子向父组件传值");
+	   		}
+	   }
+
+   （2）父页面接收：
+		<app-header @chageTitle="updataTitle($event)" v-bind:list="list"/>  //chageTitle名称必须跟子页面对应 参数必须$event
+		例子：methods:{
+			  	updataTitle(list){
+			  		this.list=list;
+			  	}
+			  }
+
+
+13.生命周期
+	（1）beforeCreate //Vue实例还没有构建完 loding加载...
+	（2）created //Vue实例构建完 属性成功绑定 dom还未生成  获取对应数据，接口
+		//检验main.js是否有挂载点el:"#app"  或者.$mount("#app"); 如果没有生命周期就结束
+		//检查main.js是否有templat，否则生命周期结束
+	（3）beforeMount  //挂载,开始编译模板,在虚拟Dom执行，还看不到对应的内容
+	（4）mounted  //模板编译完成，开始挂载，页面响应完成
+	（5）beforeUpdate //组件更新之前，需要调用的函数
+	 (6)update //组件更新之后，
+	（7）beforeDestory //销毁之前，
+	(8)destoryed //销毁之后
+
+14.vue-router与Http
+	 (0)首先安装 cnpm install vue-router --save-dev
+	（1）在router文件夹 index.js内配置 页面跳转的路径	
+	（2）在index.js内引入需要调用的页面
+	 (3)设置mode:"history"  消除路径后面的 (/#)
+	（4）在main.js内引用 router,
+	（5）在App.vue页面调用router-view
+	 (6)路径跳转不用<a href=""></a>标签 因为会刷新页面,用<router-link to="/hellowold">helloWorld</router-link>这样不会刷新页面
+	
+	Http的使用:
+		(1)首先安装 cnpm install vue-resource --save-dev
+		(2)在router文件夹下 index.js内配置路径（首先引入vue-resource 然后配置Vue.use(VueResource)）
+	   （3）使用,在created方法内使用 //组件实例化完毕，页面还未显示
+	   		created(){
+			    this.$http.get("http://jsonplaceholder.typicode.com/users").then((data)=>{
+			      console.log(data);
+			      this.users=data.body;
+			    })
+			  }
+
+
+15.创建vie-cli	
+	(1)在命令行创建文件夹 mkdir projects(随便命名)
+   （2）进入刚创建的文件夹 cd projects/
+	(3)在命令行输入vue init webpack-simple pizza-app(随便命名)，然后一路回车
+   （4）进入到你命名的文件夹cd  pizza-app(随便命名) ，然后 cnpm install （初始化） ，在然后npm run dev 启动项目
+   	(5)安装vuex的命令：cnpm install vuex --save
+
+	
+	全局vue项目
+		cnpm install vue
+		
+	
+	16.跳转页面
+	   //返回上一次浏览的页面
+		this.$router.go(-1);
+		//指定跳转的地址
+		this.$router.replace("/menu");
+		//指定跳转路由的名字
+		this.$router.replace({name:"menuLink"});
+		//通过push进行跳转
+		this.$router.push("/menu");
+		this.$router.push({name:"menuLink"});
+
+	17/18/19实例在vue-project页面router.js
+	17.全局守卫
+	
+		to进入到那个路由
+		from从哪个路由离开
+		next函数
+	
+	router.beforeEach((to,from,next)=>{
+		//alert("还未登陆，请先登陆");
+		//next();
+		//判断store.gettes.isLogin===false
+		if(to.path=="/Login"||to.path=="/Register"){
+			next();
+		}else{
+			alert("还未登陆，请先登陆");
+			next("/Login");
+		}
+	});
+
+
+	18.后置钩子
+		to进入到那个路由
+		from从哪个路由离开
+	router.afterEach((to,from)=>{
+		alert("pppp");
+	});
+
+
+	19.路由独享
+	beforeEnter(to,trom,next)(路由独享守卫*/
+		{path:"/Menu",name:"linkMenu",component:Menu/*,beforeEnter:(to,trom,next)=>{
+			//alert("非登陆状态不能访问");
+			//有next()方法才能访问
+			//next();
+			//判断store.gettes.isLogin===false
+			if(to.path=="/Login"||to.path=="/Register"){
+				next();
+			}else{
+				alert("还未登陆，请先登陆");
+				next("/Login");
+			}
+		}},
+
+
+	20.组件内的守卫
+
+	beforeRouteEnter()方法比onload()方法先执行 进入页面获取this.name为undefined,需要用next()方法回调才能获取到
+	/*beforeRouteEnter:(to,from,next)=>{
+			//alert("sda"+this.name);
+			next(function(vb){
+				alert(vb.name);
+			});
+			//next(vm=>{
+			//	alert(vm.name+"sksksk");
+			//});
+		}*/
+	
+		是否离开本页面
+		beforeRouteLeave (to, from, next) {
+	   		// 导航离开该组件的对应路由时调用
+	    	// 可以访问组件实例 `this`
+	    	if(confirm("你确认离开吗？")==true){
+	    		next();
+	    	}else{
+	    		next(false);
+	    	}
+
+	 	 } 
+
+	21.自定义指令directive  
+		rainbow:自定义指令的名称（可随便命名 前提是不冲突）
+		el:元素 //可以定义样式
+		binding:获取参数或值  //binding.value获取值 binding.arg获取参数
+		vnode: 虚拟节点
+	
+		1.自定义指令directive 在main.js自定义 全局组件定义 
+	
+	（1）v-rainbow不给值的情况
+	Vue.directive("rainbow",{
+		bind(el,binding,vnode){
+			//el.style.color="red";添加样式
+			//el.style.color="#"+Math.random().toString(16).slice(2,8);随机显示颜色
+
+		}
+	})
+	使用：
+		<div v-rainbow>自定义完后，使用</div>
+		
+
+
+	(2)v-motes:colume="'widt'" 给值的情况 //widt(这个值可以是字符串/数组/对象)  colume：这个是参数
+		Vue.directive("motes",{
+			bind(el,binding,vnode){
+				if(binding.value=="widt"){
+					el.style.width="1200px";
+				}else ifbinding.value=="norrw"){
+					el.style.width="675px";
+				}
+
+				if(binding.arg==colume){ //binging.arg获取参数
+					el.style.background="#"+Math.random().toString(16).slice(2,8);随机显示颜色
+					el.style.padding="20px"
+				}
+
+			}
+		})
+
+		使用：
+			<div v-motes:colume="'widt'">自定义完后，使用</div>
+			或者:<div v-motes:colume="'norrw'">自定义完后，使用</div>
+
+
+		2.自定义指令directive 局部组件定义
+			export default{
+						data(){
+							
+						},
+						directives:{
+							"rainbow":{
+								bind(el,binding,vnode){
+									//el.style.color="red";添加样式
+									//el.style.color="#"+Math.random().toString(16).slice(2,8);随机显示颜色
+								}
+							}
+						}
+					}
+
+
+		22.过滤器filter
+			（1）过滤器filter全局定义在main.js自定义  
+			Vue.filter("toUppCase",function(value){  //toUppCase可以自定义 随便命名 value获取Html传递过来的值
+				//return value.slice(0,100)+"....";//截取只能显示100个字
+				return value.toUpperCase();
+			})
+			
+			使用：
+				<div>{{cakse | toUppCase}}</div> //cakse 相当于传递的参数
+
+			（2）过滤器filter局部组件定义
+					export default{
+						data(){
+							blogs:[],
+							search:""
+						},
+						filters:{
+							<!-- "toUppCase"：function(value){  //toUppCase可以自定义 随便命名 value获取Html传递过来的值
+								return value.slice(0,100)+"....";//截取只能显示100个字
+								return value.toUpperCase();
+							}, -->
+							//或者这样写也可以
+							toUppCase(value){
+								//return value.slice(0,100)+"....";//截取只能显示100个字
+								return value.toUpperCase();
+							}
+						}
+					}
+
+
+		23.搜索功能 
+			<input type="text" name="搜索" v-model="search" placeholder="搜索">	
+			<div v-for="blog in filterBlog">
+				<div>{{blog.title}}</div>
+				<div>{{blog.body}}</div>
+			</div>	
+
+			export default{
+				data(){
+					blogs:[],
+					search:""
+				},
+				//调用接口
+				created(){
+					this.$http.post("url").then(function(data){
+
+					})
+				},
+				computed:{
+					filterBlog：function(){
+						return this.blogs.filter((blog)=>{
+							return blog.title.match(this.search);
+						})
+					}
+				}
+			}
+	
+ 	 vuex
+ 	 (1)在命令行创建文件夹 mkdir projects(随便命名)
+   （2）进入刚创建的文件夹 cd projects/
+	(3)在命令行输入vue init webpack-simple pizza-app(随便命名)，然后一路回车
+   （4）进入到你命名的文件夹cd  pizza-app(随便命名) ，然后 cnpm install （初始化） ，在然后npm run dev 启动项目
+   	(5)安装vuex的命令：cnpm install vuex --save
+
+
+	   	(1)安装vuex的命令：cnpm install vuex --save
+	   （2）创建store文件夹,然后创建store.js
+       （3）在store.js引入vue和vuex;
+			例子：
+				import Vue from 'vue'
+				import Vuex from 'vuex'
+				Vue.use(Vuex);
+				export const store = new Vuex.Store({
+				  state: {                                                    
+				    products:[
+				        {name:"小明",price:"200"},
+				        {name:"小会",price:"140"},
+				        {name:"小芳",price:"20"},
+				        {name:"小菜",price:"10"}
+				      ]
+				  }
+				})
+		（4）在main.js里引用注册
+			例子：
+				import {store} from './store/store'
+				new Vue({
+				  store:store,
+				  el: '#app',
+				  render: h => h(App)
+				})
+		(5)安装babei兼容es6 cnpm install babel-preset-stage-2 --save-dev
+
+
+
+ 	 	//解决跨域
+		proxyTable:{
+			"/apis":{
+				target:"http://www.baidu.com",//接口域名
+				changeOrigin:true,//是否跨域
+				pathRewite:{
+					"^/apis":""//需要rewrite重写
+				}
+			}
+		}
+
+	 	 1.fetch
+	 	 	fetch("url",{
+				method:"post",
+				headers:{token:""},
+				body:JSON.stringify({username:"小样",pas:"1212"})
+	 	    }).then(result=>{
+					return result.json();
+ 				}).then(data=>{
+					console.log(data);
+ 				})
+
+ 		 1.axios		
+ 		 	1.安装 cnpm install axios
+ 		 	2.在main.js里引入 import axios from "axios"
+ 		 	3.全局引用Vue.prototype.$axios=axios
+ 		 	4.axios.defaults.headers.common["token"]=""
+ 		 	5.axios.defaults.headers.post["Content-type"]="application/json"
+
+ 		 	在页面请求接口
+ 		 	this.$axios.post("url",{
+				username:"小明",pas:"454845"
+ 		 	}).then(data=>{
+				console.log(data);
+ 		 	})
+
+			
